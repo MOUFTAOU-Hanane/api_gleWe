@@ -37,7 +37,7 @@ class AuthController extends Controller
             $validator = [
                 'last_name' => ['required'],
                 'first_name' => ['required'],
-                'email' => ['email','unique:users,email'],
+                'email' => ['required','email','unique:users,email'],
                 'country_id' => ['required','exists:countries,id'],
                 'adresse' => ['nullable', 'unique:users,adresse' ],
                 'password' => ['required'],
@@ -46,7 +46,8 @@ class AuthController extends Controller
             $validationMessages = ['last_name.required' => 'Le prénom est requis', 'first_name.required' => 'Le nom de famille est requis', 'adresse.required' => 'Le numéro de téléphone est requis',
             'adresse.unique' => 'Cet numéro de téléphone est déja utilisé',
              'password.required' => 'Le mot de passe est requis','email.email' => 'Veuillez fournir une adresse email valide',
-             'email.unique' => 'Cette adresse email est déja utilisée'];
+             'email.unique' => 'Cette adresse email est déja utilisée','country_id.required' => "L'identifiant du pays est requis" ,
+            ];
 
             $validatorResult = Validator::make($rData, $validator, $validationMessages); //
             if ($validatorResult->fails()) {
