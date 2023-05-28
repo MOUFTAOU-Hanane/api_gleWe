@@ -3,14 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\OperationService;
+use App\Services\FileService;
 use Illuminate\Http\Request;
+use Exception;
+use Illuminate\Support\Facades\Validator;
 
 class CourseController extends Controller
 {
     protected OperationService $_operationService;
-    public function __construct(OperationService $operationService)
+    protected FileService $_fileService;
+
+    public function __construct(OperationService $operationService, FileService $fileService)
     {
        $this->_operationService = $operationService;
+       $this->_fileService = $fileService;
     }
 
 
@@ -53,12 +60,64 @@ class CourseController extends Controller
                     'message' => $validatorResult->errors()->first(),
                 ], 400);
             }
+            $name=  $rData['name'];
+            $category=  $rData['category_id'];
+            $name_trainer=  $rData['trainer_name'];
+            $price=  $rData['price'];
+            $meaning=  $rData['description'];
+            $type=  $rData['course_type'];
+            $level=  $rData['course_level'];
+            $duration=  $rData['estimated_duration'];
+            $lang=  $rData['language_id'];
 
+            if ($request->file('cover')->getSize() > 5000000) {
+                throw new Exception("Veuillez fournir une photo de formation de moins de 5Mo");
+            }
 
+            //check error
+            if ($request->hasFile('cover') === false) {
+                throw new Exception("Veuillez fournir une photo de formation");
+            }
 
+              //save file
+            //todo: mettre dans un service
+            $file=$request->file('cover');
+
+             //do operation
+             $fileName = $this->_fileService->saveImage( $file);
+            //check error
+            if (!$fileName) {
+              throw new Exception("Veuillez fournir une photo de formation");
+            }
+
+            $result = $this->_operationService->createCourse($name, $category, $name_trainer, $price, $meaning, $type, $level, $duration, $lang, $fileName);
+            if($result  === false){
+                return response()->json(
+                    [
+                        "data"=> "",
+                        "status"=> "error",
+                        "message"=> "error",
+                    ]
+                    );
+            }else{
+                return response()->json(
+                    [
+                        "data"=> $result,
+                        "status"=> "success",
+                        "message"=> "succes",
+                    ]
+                    );
+
+            }
 
         }catch(Exception $ex){
-            throw new Exception($ex);
+            return response()->json(
+                [
+                    "data"=> "",
+                    "status"=> "error",
+                    "message"=> $ex->getMessage(),
+                ]
+                );
         }
 
     }
