@@ -6,6 +6,8 @@ use App\Repositories\OperationRepository;
 use Exception;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Module;
+
 
 class OperationService
 {
@@ -15,7 +17,7 @@ class OperationService
        $this->_operationRepository = $operationRepository;
     }
 
-    public function createCourse($name, $category, $name_trainer, $price, $meaning, $type, $level, $duration, $lang, $fileName, $user_id){
+    public function createCourse($name, $category, $name_trainer, $price, $meaning, $duration, $lang, $fileName, $user_id){
         try{
             $userFound = User::where('reference', $user_id)->first();
             $userRole=  $userFound->role_id;
@@ -24,7 +26,7 @@ class OperationService
                 throw new Exception("Vous ne disposer pas des droits pour créer une formation");
             }
             else{
-                return $this->_operationRepository->createCourse($name, $category, $name_trainer, $price, $meaning, $type, $level, $duration, $lang, $fileName);
+                return $this->_operationRepository->createCourse($name, $category, $name_trainer, $price, $meaning, $duration, $lang, $fileName);
 
             }
 
@@ -60,7 +62,7 @@ class OperationService
     }
     }
 
-    public function createModule($name, $course, $duration, $fileName, $user_id){
+    public function createModule($name, $course, $duration,$user_id){
         try{
             $userFound = User::where('reference', $user_id)->first();
             $userRole=  $userFound->role_id;
@@ -69,7 +71,12 @@ class OperationService
                 throw new Exception("Vous ne disposer pas des droits pour créer un module");
             }
             else{
-                return $this->_operationRepository->createModule($name, $course, $duration, $duration, $fileName);
+            $module = new Module();
+            $module->name = $name;
+            $module->course_id = $course;
+            $module->duration = $duration;
+            $module->save();
+                return $this->_operationRepository->createModule($name, $course, $duration);
 
             }
 
@@ -77,6 +84,26 @@ class OperationService
             throw new Exception($ex);
         }
     }
+
+    public function createVideoModule($name, $module, $duration,$user_id, $fileName){
+        try{
+            $userFound = User::where('reference', $user_id)->first();
+            $userRole=  $userFound->role_id;
+            $roleAdmin = Role::where("label","admin")->first();
+            if ($roleAdmin->id !==  $userRole ){
+                throw new Exception("Vous ne disposer pas des droits pour créer un module");
+            }
+            else{
+
+                return $this->_operationRepository->createModule($name, $module, $duration,$user_id, $fileName);
+
+            }
+
+        }catch(Exception $ex){
+            throw new Exception($ex);
+        }
+    }
+
 
     public function updateModule($moduleId, $name, $course, $duration, $fileName, $user_id){
         try{
@@ -178,6 +205,15 @@ class OperationService
             throw new Exception($ex);
         }
     }
+
+    public function getPopularCourse(){
+        try{
+             return $this->_operationRepository->getPopularCourse();
+
+        }catch(Exception $ex){
+            throw new Exception($ex);
+        }
+        }
 
 
 

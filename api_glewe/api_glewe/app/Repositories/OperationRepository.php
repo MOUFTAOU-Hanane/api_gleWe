@@ -9,11 +9,19 @@ use App\Models\Module;
 use App\Models\User;
 use App\Models\Rating;
 use Carbon\Carbon;
+use App\Services\FileService;
+use App\Models\VideoModule;
 
 class OperationRepository implements OperationRepositoryInterface
 {
 
-    public function createCourse($name, $category, $name_trainer, $price, $meaning, $type, $level, $duration, $lang, $fileName){
+    protected FileService $_fileService;
+    public function __construct(FileService $fileService)
+    {
+       $this->_fileService = $fileService;
+    }
+
+    public function createCourse($name, $category, $name_trainer, $price, $meaning, $duration, $lang, $fileName){
         try{
             $course = new Course();
             $course->name = $name;
@@ -21,14 +29,12 @@ class OperationRepository implements OperationRepositoryInterface
             $course->trainer_name = $name_trainer;
             $course->price = $price;
             $course->description = $meaning;
-            $course->course_type = $type;
-            $course->course_level = $level;
-            $course->duration = $duration;
+            $course->estimated_duration = $duration;
             $course->language_id = $lang;
             $course->cover = $fileName;
             $course->enrolled_student = 0;
             $course->save();
-            return true;
+            return $course;
 
 
         }catch(Exception $ex){
@@ -39,8 +45,8 @@ class OperationRepository implements OperationRepositoryInterface
 
     public function getCourse(){
         try{
-            $modules =  Course::with( "category","language", "courses_enrolments","modules")->get();
-            return $modules;
+            $courses =  Course::with( "category","language","modules",'quizzes')->get();
+            return $courses;
 
         }catch(Exception $ex){
             throw new Exception($ex);
@@ -62,15 +68,17 @@ class OperationRepository implements OperationRepositoryInterface
     }
 
 
-    public function createModule($name, $course, $duration, $fileName){
+    public function createModule($name, $course, $duration){
         try{
             $module = new Module();
             $module->name = $name;
             $module->course_id = $course;
             $module->duration = $duration;
-            $module->video = $fileName;
             $module->save();
             return true;
+
+
+
 
 
         }catch(Exception $ex){
@@ -123,7 +131,7 @@ class OperationRepository implements OperationRepositoryInterface
 
     public function searchCourseByCategory($categoryId){
         try{
-            $courses = Course::where('category_id', $categoryId)->with( "category","language", "courses_enrolments","modules")->get();
+            $courses = Course::where('category_id', $categoryId)->with( "category","language", "modules",'quizzes')->get();
             return $courses;
 
         }catch(Exception $ex){
@@ -135,7 +143,7 @@ class OperationRepository implements OperationRepositoryInterface
 
     public function searchCourse($name){
         try{
-            $courses = Course::where('name','like',"%". $name. "%")->with( "category","language", "courses_enrolments","modules")->get();
+            $courses = Course::where('name','like',"%". $name. "%")->with( "category","language","modules",'quizzes')->get();
             return $courses;
 
         }catch(Exception $ex){
@@ -148,7 +156,7 @@ class OperationRepository implements OperationRepositoryInterface
 
     public function detailCourse($courseId){
         try{
-            $courseFound =  Course::where('id',$courseId)->with( "category","language", "courses_enrolments","modules")->get();
+            $courseFound =  Course::where('id',$courseId)->with( "category","language", "modules",'quizzes')->get();
             return $courseFound;
 
         }catch(Exception $ex){
@@ -202,7 +210,7 @@ class OperationRepository implements OperationRepositoryInterface
            $courses = CoursesEnrolment::where('user_id','=', $userFoundId)->with( "course")->get();
            foreach ($courses as $course){
             $courseId = $course->course_id;
-            $course = Course::where('id',$courseId)->with( "category","language", "courses_enrolments","modules")->get();
+            $course = Course::where('id',$courseId)->with( "category","language", "courses_enrolments","modules",'quizzes', 'ratings')->get();
            }
            $coursesUser = array_push($data, $course );
            return $coursesUser;
@@ -219,11 +227,52 @@ class OperationRepository implements OperationRepositoryInterface
             $userFound = User::where('reference', 'like', $userId)->first();
             $courseIds = CoursesEnrolment::where('user_id', $userFound->id)->pluck('course_id');
 
-            $courses = Course::whereIn('id', $courseIds)->with("category", "language", "courses_enrolments", "modules")->get();
+            $courses = Course::whereIn('id', $courseIds)->with("category", "language", "modules")->get();
 
             return $courses;
         } catch (Exception $ex) {
             throw new Exception($ex);
+        }
+    }
+
+
+    public function createVideoModule($name, $module, $duration,$file){
+        try{
+            $videoModule = new VideoModule();
+            $videoModule->name = $name;
+            $videoModule->module_id = $module;
+            $videoModule->duration = $duration;
+            $videoModule->video = $file;
+            return $videoModule;
+
+
+        }catch(Exception $ex){
+            throw new Exception($ex);
+
+        }
+
+    }
+
+
+    public function getPopularCourse(){
+        try{
+            $courses =  Course::with( "category","language","modules")->limit(4)->orderBy('id','DESC')->get();
+            return $courses;
+
+        }catch(Exception $ex){
+            throw new Exception($ex);
+
+        }
+    }
+
+    public function validatedCourse($id){
+        try{
+            $courses =  Course::where("id",$id)->first();
+            return $courses;
+
+        }catch(Exception $ex){
+            throw new Exception($ex);
+
         }
     }
 

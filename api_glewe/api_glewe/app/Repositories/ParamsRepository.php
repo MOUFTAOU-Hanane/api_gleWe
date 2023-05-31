@@ -17,7 +17,7 @@ class ParamsRepository implements ParamsRepositoryInterface
     public function createCategory($label){
         try{
             $category = new Category();
-            $category ->label =$label;
+            $category ->name =$label;
             $category ->save();
             return true;
 

@@ -26,13 +26,7 @@ class AuthRepository implements AuthRepositoryInterface
             $user->save();
 
 
-            return array(
-                "first_name" => $user->first_name,
-                "last_name" => $user->last_name,
-                "email" => $user->email,
-                "adresse" =>  $user->adresse,
-                "reference" => $user->reference ,
-            );
+            return true;
 
         }catch(Exception $ex){
             throw  new Exception($ex);
@@ -54,7 +48,6 @@ class AuthRepository implements AuthRepositoryInterface
                 "first_name" => $foundUser->first_name,
                 "last_name" => $foundUser->last_name,
                 "email" => $foundUser->email,
-                "adresse" =>  $foundUser->adresse,
                 "reference" => $foundUser->reference ,
             );
 

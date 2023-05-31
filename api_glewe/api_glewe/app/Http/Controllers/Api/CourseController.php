@@ -8,6 +8,7 @@ use App\Services\FileService;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class CourseController extends Controller
 {
@@ -24,16 +25,14 @@ class CourseController extends Controller
      //
      public function createCourse(Request $request){
         try{
-            $rData=$request->only(['user_id','name', "category_id", 'trainer_name', 'price','description', "course_type", "course_level","estimated_duration","language_id"]);
+            $rData=$request->only(['user_id','name', "category_id", 'trainer_name', 'price','description',"estimated_duration","language_id"]);
             $validator=[
-                'user_id' => ['required','exists:users,id'],
+                'user_id' => ['required','exists:users,reference'],
                 'name' => ['required'],
                 'category_id' => ['required','exists:categories,id'],
                 'trainer_name' => ['required'],
                 'price' => ['required'],
                 'description' => ['required'],
-                'course_type' => ['required'],
-                'course_level' => ['required'],
                 'estimated_duration' => ['required'],
                 'language_id' => ['required', 'exists:languages,id'],
             ];
@@ -44,8 +43,6 @@ class CourseController extends Controller
                 'trainer_name.required' => "Le nom du formateur est requis",
                 'price.required' => "Le prix de la formation est requis est requis",
                 'description.required' => "Une description de la formation est requise",
-                'course_type.required' => "Le type de la formation est requise",
-                'course_level.required' => "Le niveau de la formation est requis",
                 'estimated_duration.required' => "La durée estimée par le cours est requise",
                 'language_id.required' => "Le language de la formation est requis",
                 'language_id.exists' => "Le language de la formation n'est pas valide",
@@ -69,8 +66,6 @@ class CourseController extends Controller
             $name_trainer=  $rData['trainer_name'];
             $price=  $rData['price'];
             $meaning=  $rData['description'];
-            $type=  $rData['course_type'];
-            $level=  $rData['course_level'];
             $duration=  $rData['estimated_duration'];
             $lang=  $rData['language_id'];
 
@@ -94,7 +89,7 @@ class CourseController extends Controller
               throw new Exception("Veuillez fournir une photo de formation");
             }
 
-            $result = $this->_operationService->createCourse($name, $category, $name_trainer, $price, $meaning, $type, $level, $duration, $lang, $fileName, $user_id);
+            $result = $this->_operationService->createCourse($name, $category, $name_trainer, $price, $meaning, $duration, $lang, $fileName, $user_id);
             if($result  === false){
                 return response()->json(
                     [
@@ -115,11 +110,12 @@ class CourseController extends Controller
             }
 
         }catch(Exception $ex){
+            log::error($ex->getMessage());
             return response()->json(
                 [
                     "data"=> "",
                     "status"=> "error",
-                    "message"=> $ex->getMessage(),
+                    "message"=> "Une erreur est surveneue pendant la création de la formation. Veuillez réessayer",
                 ]
                 );
         }
@@ -326,6 +322,25 @@ class CourseController extends Controller
                     "message"=> $ex->getMessage(),
                 ]
                 );
+        }
+
+    }
+
+
+    public function getPopularCourse(){
+        try{
+            $result = $this->_operationService->getPopularCourse();
+            return response()->json([
+                'data' => $result,
+                'status' => "success",  'message' => "success",
+            ], 200);
+
+        }catch(Exception $ex){
+            return response()->json([
+                'data' => "",
+                'status' => "error",
+                'message' => $ex->getMessage(),
+            ], 400);
         }
 
     }

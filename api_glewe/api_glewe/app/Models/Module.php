@@ -7,6 +7,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $updated_at
  * 
  * @property Course $course
+ * @property Collection|VideoModule[] $video_modules
  *
  * @package App\Models
  */
@@ -42,5 +44,10 @@ class Module extends Model
 	public function course()
 	{
 		return $this->belongsTo(Course::class);
+	}
+
+	public function video_modules()
+	{
+		return $this->hasMany(VideoModule::class);
 	}
 }

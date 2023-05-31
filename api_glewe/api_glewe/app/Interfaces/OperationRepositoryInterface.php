@@ -2,13 +2,13 @@
  namespace App\Interfaces;
 interface OperationRepositoryInterface
 {
-    public function createCourse($name, $category, $name_trainer, $price, $meaning, $type, $level, $duration, $lang, $fileName);
+    public function createCourse($name, $category, $name_trainer, $price, $meaning,$duration, $lang, $fileName);
 
     public function getCourse();
 
     public function deleteCourse($courseId);
 
-    public function createModule($name, $course, $duration, $fileName);
+    public function createModule($name, $course, $duration);
 
     public function  updateModule($moduleId, $name, $course, $duration, $fileName);
 
@@ -27,6 +27,10 @@ interface OperationRepositoryInterface
     public function userCourse($userId);
 
     public function ratingCourse($course, $userId, $note);
+
+    public function createVideoModule($name, $module, $duration,$file);
+
+    public function getPopularCourse();
 
 
 }

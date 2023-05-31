@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Exception;
 
 class Handler extends ExceptionHandler
 {
@@ -47,4 +48,15 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+
+    public function render($request, Throwable $exception)
+{
+    // Personnalisez le rendu de l'exception pour votre message d'erreur spécifique
+    if ($exception instanceof Exception && $exception->getMessage() === 'Votre email ou votre mot de passe est incorrect') {
+        return response()->json(['message' => 'Votre email ou votre mot de passe est incorrect'], 401);
+    }
+
+    return parent::render($request, $exception);
+}
 }

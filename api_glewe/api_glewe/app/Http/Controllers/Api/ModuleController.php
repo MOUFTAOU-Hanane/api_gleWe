@@ -23,7 +23,7 @@ class ModuleController extends Controller
         try{
             $rData=$request->only(['user_id','name', "course_id", "duration"]);
             $validator=[
-                'user_id' => ['required','exists:users,id'],
+                'user_id' => ['required','exists:users,reference'],
                 'name' => ['required'],
                 'course_id' => ['required','exists:courses,id'],
                 'duration' => ['required'],
@@ -52,23 +52,7 @@ class ModuleController extends Controller
             $course=  $rData['course_id'];
             $duration=  $rData['duration'];
 
-            //check error
-            if ($request->hasFile('video') === false) {
-                throw new Exception("Veuillez fournir une video du module");
-            }
-
-              //save file
-            //todo: mettre dans un service
-            $file=$request->file('video');
-
-             //do operation
-             $fileName = $this->_fileService->saveImage( $file);
-            //check error
-            if (!$fileName) {
-              throw new Exception("Veuillez fournir une video du module");
-            }
-
-            $result = $this->_operationService->createModule($name, $course, $duration, $fileName, $user_id);
+            $result = $this->_operationService->createModule($name, $course, $duration,$user_id);
             if($result  === false){
                 return response()->json(
                     [
@@ -105,7 +89,7 @@ class ModuleController extends Controller
             $rData=$request->only(['module_id','user_id','name', "course_id", "duration"]);
             $validator=[
                 'module_id' => ['required','exists:modules,id'],
-                'user_id' => ['required','exists:users,id'],
+                'user_id' => ['required','exists:users,reference'],
                 'name' => ['required'],
                 'course_id' => ['required','exists:courses,id'],
                 'duration' => ['required'],
@@ -144,16 +128,12 @@ class ModuleController extends Controller
 
               //save file
             //todo: mettre dans un service
-            $file=$request->file('video');
+            $files=$request->file('videos');
 
              //do operation
-             $fileName = $this->_fileService->saveImage( $file);
-            //check error
-            if (!$fileName) {
-              throw new Exception("Veuillez fournir une video du module");
-            }
 
-            $result = $this->_operationService->updateModule($module_id, $name, $course, $duration, $fileName, $user_id);
+
+            $result = $this->_operationService->updateModule($module_id, $name, $course, $duration, $files, $user_id);
             if($result  === false){
                 return response()->json(
                     [
@@ -232,7 +212,7 @@ class ModuleController extends Controller
             $rData=$request->only(["module_id", "user_id"]);
             $validator=[
                 'module_id' => ['required','exists:modules,id'],
-                'user_id' => ['required','exists:users,id'],
+                'user_id' => ['required','exists:users,reference'],
             ];
             $validationMessages = [
                 'module_id.required' => "La reference du module est requise",
@@ -259,6 +239,88 @@ class ModuleController extends Controller
                     "message"=> "succes",
                 ]
                 );
+
+        }catch(Exception $ex){
+            return response()->json(
+                [
+                    "data"=> "",
+                    "status"=> "error",
+                    "message"=> $ex->getMessage(),
+                ]
+                );
+        }
+
+    }
+
+
+
+    public function createVideoModule(Request $request){
+        try{
+            $rData=$request->only(['user_id','name', "module_id", "duration"]);
+            $validator=[
+                'user_id' => ['required','exists:users,reference'],
+                'name' => ['required'],
+                'module_id' => ['required','exists:courses,id'],
+                'duration' => ['required'],
+            ];
+            $validationMessages = [
+                'name.required' => "Le nom du module est requis",
+                'module_id.required' => "La reference du module est requise",
+                'module_id.exists' => "La reference du module n'est pas valide",
+                'duration.required' => "La durée estimée par le module est requise",
+                'user_id.required' => "La reference de l'admin est requis",
+                'user_id.exists' => "La reference de l'admin n'est pas valide",
+
+
+            ];
+            $validatorResult=Validator::make( $rData, $validator, $validationMessages);
+
+            if ($validatorResult->fails()) {
+                return response()->json([
+                    'data' => $validatorResult->errors()->first(),
+                    'status' => "error",
+                    'message' => $validatorResult->errors()->first(),
+                ], 400);
+            }
+            $user_id=  $rData['user_id'];
+            $name=  $rData['name'];
+            $module=  $rData['module_id'];
+            $duration=  $rData['duration'];
+
+            //check error
+            if ($request->hasFile('video') === false) {
+                throw new Exception("Veuillez fournir une vidéo du module");
+            }
+
+              //save file
+            //todo: mettre dans un service
+            $file=$request->file('video');
+            //do operation
+            $fileName = $this->_fileService->saveImage( $file);
+            //check error
+            if (!$fileName) {
+              throw new Exception("Veuillez fournir une photo de formation");
+            }
+
+
+            $result = $this->_operationService->createVideoModule($name, $module, $duration,$user_id, $fileName);
+            if($result  === false){
+                return response()->json(
+                    [
+                        "status"=> 400,
+                        "message"=> "error",
+                    ]
+                    );
+            }else{
+                return response()->json(
+                    [
+                        "data"=> $result,
+                        "status"=> 200,
+                        "message"=> "succes",
+                    ]
+                    );
+
+            }
 
         }catch(Exception $ex){
             return response()->json(

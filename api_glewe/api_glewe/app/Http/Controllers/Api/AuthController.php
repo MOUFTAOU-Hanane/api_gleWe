@@ -8,6 +8,8 @@ use Exception;
 use App\Services\AuthService;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
+
 class AuthController extends Controller
 {
     //
@@ -29,7 +31,7 @@ class AuthController extends Controller
             "last_name" => $request->get("last_name"),
             "first_name" => $request->get("first_name"),
             "password" => $request->get("password"),
-            "email_address" => $request->get("email"),
+            "email" => $request->get("email"),
             "role_id" => $request->get("role_id"),
             "country_id" => $request->get("country_id"),
             );
@@ -41,10 +43,11 @@ class AuthController extends Controller
                 'country_id' => ['required','exists:countries,id'],
                 'adresse' => ['nullable', 'unique:users,adresse' ],
                 'password' => ['required'],
+                'role_id' => ['required','exists:roles,id'],
 
             ];
-            $validationMessages = ['last_name.required' => 'Le prénom est requis', 'first_name.required' => 'Le nom de famille est requis', 'adresse.required' => 'Le numéro de téléphone est requis',
-            'adresse.unique' => 'Cet numéro de téléphone est déja utilisé',
+            $validationMessages = ['last_name.required' => 'Le prénom est requis', 'first_name.required' => 'Le nom de famille est requis',
+            'adresse.unique' => 'Cet numéro de téléphone est déja utilisé','email.required' => "L'adresse email est requis",
              'password.required' => 'Le mot de passe est requis','email.email' => 'Veuillez fournir une adresse email valide',
              'email.unique' => 'Cette adresse email est déja utilisée','country_id.required' => "L'identifiant du pays est requis" ,
             ];
@@ -52,8 +55,8 @@ class AuthController extends Controller
             $validatorResult = Validator::make($rData, $validator, $validationMessages); //
             if ($validatorResult->fails()) {
                 return response()->json([
-                    'data' => $validatorResult->errors()->first(),
-                    'status' => "error",
+                    'success' => false,
+                    'status' => 400,
                     'message' => $validatorResult->errors()->first(), //
                 ], 400);
             }
@@ -71,23 +74,22 @@ class AuthController extends Controller
 
             //check on data
 
-
             return response()->json([
-                'data' => "",
-                'status' => "success",  'message' => "Le compte a été créé avec succès",
+                'data' =>  $resultRegister,
+                'status' =>200,  'message' => "Le compte a été créé avec succès",
             ], Response::HTTP_CREATED);
 
         } catch (Exception $ex) {
+            log::error($ex->getMessage());
             //error result
             return response()->json([
                 'data' => "",
                 'status' => "error",
-                'message' => $ex->getMessage(),
-            ], 400);
+                'message' =>"Une erreur est survenue pendant l'inscription. Veuillez réessayer",
+            ], 500);
         }
 
     }
-
 
       //authentication method
       public function authenticateUser(Request $request)
@@ -112,9 +114,9 @@ class AuthController extends Controller
               $validatorResult = Validator::make($rData, $validatorRules, $validationMessages);
               if ($validatorResult->fails()) {
                   return response()->json([
-                      'data' => $validatorResult->errors()->first(),
-                      'status' => "error",
-                      'message' => "Veuillez renseigner des informations valide",
+                    'success' => false,
+                    'status' => 400,
+                    'message' => $validatorResult->errors()->first(), //
                   ], 400);
               }
 
@@ -126,15 +128,18 @@ class AuthController extends Controller
                 $resultRegisterOperation = $this->_authService->authenticateUser($email,$password);
 
               return response()->json([
+                  'success' =>true,
                   'data' =>$resultRegisterOperation,
-                  'status' => "success",  'message' => "Vous etes bien connecté",
+                  'status' => 200,
+                  'message' => "Vous etes bien connecté",
               ], 200);
           }catch (Exception $ex) {
               //error result
+              log::error($ex);
               return response()->json([
                   'data' => "",
                   'status' => "error",
-                  'message' => $ex->getMessage(),
+                  'message' =>$ex->getMessage(),
               ], 400);
           }
       } //end login

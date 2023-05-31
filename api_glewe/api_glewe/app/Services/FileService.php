@@ -32,4 +32,23 @@ class FileService
 
         }
     }//end saveImage
+
+
+    //get image url or send a default image
+   public function getImageUrl($name) {
+    try {
+        $baseUrl = env('COVERS_PATH'); //
+        $fileName = storage_path('app/uploads/' . $name);
+
+
+        if (Storage::disk('local')->exists($baseUrl .  $name))  {
+
+             return response()->file($fileName);
+        }
+
+        throw new Exception('Image non trouvée');
+    } catch (\Exception $th) {
+        throw $th;
+    }
+} //end getImageUrl
 }

@@ -22,7 +22,7 @@ class CourseEnrolmentController extends Controller
         try{
             $rData=$request->only(['user_id',"course_id"]);
             $validator=[
-                'user_id' => ['required','exists:users,id'],
+                'user_id' => ['required','exists:users,reference'],
                 'course_id' => ['required','exists:courses,id']
             ];
             $validationMessages = [
@@ -82,7 +82,7 @@ class CourseEnrolmentController extends Controller
         try{
             $rData=$request->only(['user_id']);
             $validator=[
-                'user_id' => ['required','exists:categories,id'],
+                'user_id' => ['required','exists:users,reference'],
             ];
             $validationMessages = [
                 'user_id.required' => "La reference de l'utilisateur est requis",
@@ -127,7 +127,7 @@ class CourseEnrolmentController extends Controller
         try{
             $rData=$request->only(['user_id',"course_id","note"]);
             $validator=[
-                'user_id' => ['required','exists:users,id'],
+                'user_id' => ['required','exists:users,reference'],
                 'course_id' => ['required','exists:courses,id'],
                 'note' => ['required']
             ];

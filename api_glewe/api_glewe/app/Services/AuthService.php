@@ -22,7 +22,6 @@ class AuthService
          //check on gender
          $gender = strtoupper(trim($gender));
 
-         $phoneNumber = strtoupper(trim($phoneNumber));
          // si le champs genre existe verifier si cest soit M m F ou f
              if ($gender !== '' && $gender !== 'M' && $gender !== 'F') {
                      throw new Exception("Veuillez entrer un genre valide.");
@@ -30,8 +29,12 @@ class AuthService
 
          //check on phone number
          //TODO: integrer le + au debut de chaque numero
-         if (!preg_match('/[0-9]{2}/', $phoneNumber)) {
-             throw new Exception("Veuillez entrer un numéro de téléphone valide.");
+         if(isset($phoneNumber) ){
+            $phoneNumber = strtoupper(trim($phoneNumber));
+
+            if (!preg_match('/[0-9]{2}/', $phoneNumber)) {
+                throw new Exception("Veuillez entrer un numéro de téléphone valide.");
+            }
          }
 
          //la longueur minimum du password doit etre 5 caracteres

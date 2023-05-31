@@ -20,8 +20,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $price
  * @property string $description
  * @property string|null $cover
- * @property string $course_type
- * @property int $course_level
  * @property string $estimated_duration
  * @property int $enrolled_student
  * @property int $language_id
@@ -44,7 +42,6 @@ class Course extends Model
 	protected $casts = [
 		'category_id' => 'int',
 		'price' => 'int',
-		'course_level' => 'int',
 		'enrolled_student' => 'int',
 		'language_id' => 'int'
 	];
@@ -56,8 +53,6 @@ class Course extends Model
 		'price',
 		'description',
 		'cover',
-		'course_type',
-		'course_level',
 		'estimated_duration',
 		'enrolled_student',
 		'language_id'
