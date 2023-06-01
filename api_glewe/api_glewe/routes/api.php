@@ -73,7 +73,9 @@ Route::group(['prefix' => 'offer'], function () {
     Route::post('/user-courses',  [CourseEnrolmentController::class,'userCourse']);
     Route::post('/rating-course-by-user',  [CourseEnrolmentController::class,'ratingCourse']);
 
-    Route::get('/popular-course', [CourseController::class,'getRamdomCourse']);
+    Route::get('/popular-course', [CourseController::class,'getPopularCourse']);
+    Route::post('/user-validated-module', [CourseController::class,'finishModule']);
+    Route::post('/user-validated-course', [CourseController::class,'finishCourse']);
 
 
 

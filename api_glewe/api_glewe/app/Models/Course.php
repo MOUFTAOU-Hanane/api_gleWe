@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Language $language
  * @property Collection|CoursesEnrolment[] $courses_enrolments
  * @property Collection|Module[] $modules
+ * @property Collection|ProgressionModule[] $progression_modules
  * @property Collection|Quiz[] $quizzes
  * @property Collection|Rating[] $ratings
  *
@@ -76,6 +77,11 @@ class Course extends Model
 	public function modules()
 	{
 		return $this->hasMany(Module::class);
+	}
+
+	public function progression_modules()
+	{
+		return $this->hasMany(ProgressionModule::class);
 	}
 
 	public function quizzes()

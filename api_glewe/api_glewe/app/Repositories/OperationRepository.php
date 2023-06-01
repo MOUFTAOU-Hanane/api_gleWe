@@ -11,6 +11,8 @@ use App\Models\Rating;
 use Carbon\Carbon;
 use App\Services\FileService;
 use App\Models\VideoModule;
+use App\Models\ProgressionModule;
+
 
 class OperationRepository implements OperationRepositoryInterface
 {
@@ -45,7 +47,7 @@ class OperationRepository implements OperationRepositoryInterface
 
     public function getCourse(){
         try{
-            $courses =  Course::with( "category","language","modules",'quizzes')->get();
+            $courses =  Course::with( "category","language","modules")->get();
             return $courses;
 
         }catch(Exception $ex){
@@ -120,7 +122,7 @@ class OperationRepository implements OperationRepositoryInterface
 
     public function getModule($courseId){
         try{
-            $modules =  Module::where('course_id',$courseId)->with('course')->get();
+            $modules =  Module::where('course_id',$courseId)->with('course',"video_modules")->get();
             return $modules;
 
         }catch(Exception $ex){
@@ -143,7 +145,7 @@ class OperationRepository implements OperationRepositoryInterface
 
     public function searchCourse($name){
         try{
-            $courses = Course::where('name','like',"%". $name. "%")->with( "category","language","modules",'quizzes')->get();
+            $courses = Course::where('name','like',"%". $name. "%")->with( "category","language","modules")->get();
             return $courses;
 
         }catch(Exception $ex){
@@ -243,7 +245,8 @@ class OperationRepository implements OperationRepositoryInterface
             $videoModule->module_id = $module;
             $videoModule->duration = $duration;
             $videoModule->video = $file;
-            return $videoModule;
+            $videoModule-> save();
+            return true;
 
 
         }catch(Exception $ex){
@@ -265,10 +268,41 @@ class OperationRepository implements OperationRepositoryInterface
         }
     }
 
-    public function validatedCourse($id){
+    public function finishModule($idModule, $userId){
         try{
-            $courses =  Course::where("id",$id)->first();
-            return $courses;
+            $moduleFound =  Module::where("id",$idModule)->first();
+            $userFound = User::where('reference', 'like', $userId)->first();
+            $courseFound =  CoursesEnrolment::where("course_id",$moduleFound->course_id)->where("user_id",$userFound->id)->first();
+            if($courseFound ){
+                $progression = new ProgressionModule();
+                $progression->module_id = $idModule;
+                $progression->course_id = $moduleFound->course_id;
+                $progression->is_finish = true;
+                $progression->save();
+                return true;
+
+            }
+
+        }catch(Exception $ex){
+            throw new Exception($ex);
+
+        }
+    }
+
+    public function finishCourse($userId, $idCourse){
+        try{
+            $userFound = User::where('reference', 'like', $userId)->first();
+            $moduleFinish = ProgressionModule::where('course_id',  $idCourse)->where('is_finish',true)->count();
+            $modulesCourse = Module::where('course_id',$idCourse)->count();
+            if($modulesCourse ==  $moduleFinish){
+                $courseFound =  CoursesEnrolment::where("course_id",$idCourse)->where("user_id",$userFound->id)->first();
+                $courseFound->is_finish = true;
+                $courseFound->save();
+
+            }else{
+                throw new Exception("Vous n'avez pas finir les modules");
+
+            }
 
         }catch(Exception $ex){
             throw new Exception($ex);

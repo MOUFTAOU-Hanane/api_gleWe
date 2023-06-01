@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\OperationService;
@@ -256,7 +256,7 @@ class ModuleController extends Controller
 
     public function createVideoModule(Request $request){
         try{
-            $rData=$request->only(['user_id','name', "module_id", "duration"]);
+            $rData=$request->only(["user_id","name", "module_id", "duration"]);
             $validator=[
                 'user_id' => ['required','exists:users,reference'],
                 'name' => ['required'],
@@ -269,10 +269,7 @@ class ModuleController extends Controller
                 'module_id.exists' => "La reference du module n'est pas valide",
                 'duration.required' => "La durée estimée par le module est requise",
                 'user_id.required' => "La reference de l'admin est requis",
-                'user_id.exists' => "La reference de l'admin n'est pas valide",
-
-
-            ];
+                'user_id.exists' => "La reference de l'admin n'est pas valide",];
             $validatorResult=Validator::make( $rData, $validator, $validationMessages);
 
             if ($validatorResult->fails()) {
@@ -333,4 +330,54 @@ class ModuleController extends Controller
         }
 
     }
+
+    public function finishModule(Request $request){
+        try{
+            $rData=$request->only(["module_id"]);
+            $validator=[
+                'module_id' => ['required','exists:modules,id'],
+                "user_id"=> ['required','exists:users,reference'],
+            ];
+            $validationMessages = [
+                'module_id.required' => "La reference du module est requise",
+                'module_id.exists' => "La reference du module n'est pas valide",
+                'user_id.required' => "La reference de l'utilisateur est requise",
+                'user_id.exists' => "La reference de l'utilisateur n'est pas valide",
+            ];
+            $validatorResult=Validator::make( $rData, $validator, $validationMessages);
+
+            if ($validatorResult->fails()) {
+                return response()->json([
+                    'data' => $validatorResult->errors()->first(),
+                    'status' => "error",
+                    'message' => $validatorResult->errors()->first(),
+                ], 400);
+            }
+
+            $module=  $rData['module_id'];
+            $idUser = $rData['user_id'];
+            $result = $this->_operationService->finishModule($module,  $idUser );
+            return response()->json(
+                [
+                    "data"=> $result,
+                    "status"=> "success",
+                    "message"=> "succes",
+                ]
+                );
+
+        }catch(Exception $ex){
+            Log::error($ex->getMessage());
+            return response()->json(
+                [
+                    "data"=> "",
+                    "status"=> "error",
+                    "message"=> "Une erreur est survenue",
+                ]
+                );
+        }
+
+    }
+
+
+
 }

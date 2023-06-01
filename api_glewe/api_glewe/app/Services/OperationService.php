@@ -95,7 +95,7 @@ class OperationService
             }
             else{
 
-                return $this->_operationRepository->createModule($name, $module, $duration,$user_id, $fileName);
+                return $this->_operationRepository->createVideoModule($name, $module, $duration,$fileName);
 
             }
 
@@ -215,6 +215,23 @@ class OperationService
         }
         }
 
+        public function finishModule($idModule, $idUser){
+            try{
+                 return $this->_operationRepository-> finishModule($idModule, $idUser);
+
+            }catch(Exception $ex){
+                throw new Exception($ex);
+            }
+            }
+
+            public function finishCourse($idUser, $idCourse){
+                try{
+                     return $this->_operationRepository-> finishCourse($idUser, $idCourse);
+
+                }catch(Exception $ex){
+                    throw new Exception($ex);
+                }
+                }
 
 
 

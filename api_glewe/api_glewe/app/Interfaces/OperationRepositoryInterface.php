@@ -32,5 +32,8 @@ interface OperationRepositoryInterface
 
     public function getPopularCourse();
 
+    public function finishModule($idModule, $idUser);
+
+    public function finishCourse($idUser, $idCourse);
 
 }

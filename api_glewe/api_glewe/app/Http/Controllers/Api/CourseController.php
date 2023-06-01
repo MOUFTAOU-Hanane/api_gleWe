@@ -319,7 +319,7 @@ class CourseController extends Controller
                 [
                     "data"=> "",
                     "status"=> "error",
-                    "message"=> $ex->getMessage(),
+                    "message"=> "Une erreur est survenue",
                 ]
                 );
         }
@@ -336,14 +336,68 @@ class CourseController extends Controller
             ], 200);
 
         }catch(Exception $ex){
-            return response()->json([
-                'data' => "",
-                'status' => "error",
-                'message' => $ex->getMessage(),
-            ], 400);
+            Log::error($ex->getMessage());
+            return response()->json(
+                [
+                    "data"=> "",
+                    "status"=> "error",
+                    "message"=> "Une erreur est survenue",
+                ]
+                );
         }
 
     }
+
+
+    public function finishCourse(Request $request){
+        try{
+            $rData=$request->only(["course_id","user_id"]);
+            $validator=[
+                'course_id' => ['required','exists:courses,id'],
+                "user_id"=> ['required','exists:users,reference'],
+            ];
+            $validationMessages = [
+                'course_id.required' => "La reference du cours est requise",
+                'course_id.exists' => "La reference du cours n'est pas valide",
+                'user_id.required' => "La reference de l'utilisateur est requise",
+                'user_id.exists' => "La reference de l'utilisateur n'est pas valide",
+            ];
+            $validatorResult=Validator::make( $rData, $validator, $validationMessages);
+
+            if ($validatorResult->fails()) {
+                return response()->json([
+                    'data' => $validatorResult->errors()->first(),
+                    'status' => "error",
+                    'message' => $validatorResult->errors()->first(),
+                ], 400);
+            }
+
+            $idCourse=  $rData['module_id'];
+            $idUser = $rData['user_id'];
+            $result = $this->_operationService->finishCourse($idUser, $idCourse);
+            return response()->json(
+                [
+                    "data"=> $result,
+                    "status"=> "success",
+                    "message"=> "succes",
+                ]
+                );
+
+        }catch(Exception $ex){
+            Log::error($ex->getMessage());
+            return response()->json(
+                [
+                    "data"=> "",
+                    "status"=> "error",
+                    "message"=> "Une erreur est survenue",
+                ]
+                );
+        }
+
+    }
+
+
+
 
 
 

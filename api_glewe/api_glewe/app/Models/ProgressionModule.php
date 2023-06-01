@@ -10,32 +10,40 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class VideoModule
+ * Class ProgressionModule
  * 
  * @property int $id
  * @property int $module_id
- * @property string $video
+ * @property int $course_id
+ * @property bool $is_finish
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property string $name
  * 
+ * @property Course $course
  * @property Module $module
  *
  * @package App\Models
  */
-class VideoModule extends Model
+class ProgressionModule extends Model
 {
-	protected $table = 'video_module';
+	protected $table = 'progression_module';
 
 	protected $casts = [
-		'module_id' => 'int'
+		'module_id' => 'int',
+		'course_id' => 'int',
+		'is_finish' => 'bool'
 	];
 
 	protected $fillable = [
 		'module_id',
-		'video',
-		'name'
+		'course_id',
+		'is_finish'
 	];
+
+	public function course()
+	{
+		return $this->belongsTo(Course::class);
+	}
 
 	public function module()
 	{

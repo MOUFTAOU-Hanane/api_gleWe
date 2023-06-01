@@ -16,12 +16,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $course_id
  * @property string $name
- * @property string $video
  * @property string $duration
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
  * @property Course $course
+ * @property Collection|ProgressionModule[] $progression_modules
  * @property Collection|VideoModule[] $video_modules
  *
  * @package App\Models
@@ -37,13 +37,17 @@ class Module extends Model
 	protected $fillable = [
 		'course_id',
 		'name',
-		'video',
 		'duration'
 	];
 
 	public function course()
 	{
 		return $this->belongsTo(Course::class);
+	}
+
+	public function progression_modules()
+	{
+		return $this->hasMany(ProgressionModule::class);
 	}
 
 	public function video_modules()
