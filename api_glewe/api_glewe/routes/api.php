@@ -42,13 +42,14 @@ Route::group(['prefix' => 'params'], function () {
     Route::get('/countries',  [CountryController::class,'listingCountry']);
     Route::get('/roles', [RoleController::class,'listingRole']);
     Route::get('/categories',  [CategoryController::class,'listingCategory']);
-    Route::post('new-category',  [CategoryController::class,'createCategory']);
+    Route::post('/new-category',  [CategoryController::class,'createCategory']);
 
 });//end
 
 Route::group(['prefix' => 'admin'], function () {
     Route::post('/new-course', [CourseController::class,'createCourse']);
     Route::post('/delete-course',  [CourseController::class,'deleteCourse']);
+    Route::post('/update-course',  [CourseController::class,'updateCourse']);
     Route::get('/courses', [CourseController::class,'getCourse']);
     Route::post('/new-module',  [ModuleController::class,'createModule']);
     Route::post('/update-module',  [ModuleController::class,'updateModule']);
@@ -74,7 +75,7 @@ Route::group(['prefix' => 'offer'], function () {
     Route::post('/rating-course-by-user',  [CourseEnrolmentController::class,'ratingCourse']);
 
     Route::get('/popular-course', [CourseController::class,'getPopularCourse']);
-    Route::post('/user-validated-module', [CourseController::class,'finishModule']);
+    Route::post('/user-validated-module', [ModuleController::class,'finishModule']);
     Route::post('/user-validated-course', [CourseController::class,'finishCourse']);
 
 

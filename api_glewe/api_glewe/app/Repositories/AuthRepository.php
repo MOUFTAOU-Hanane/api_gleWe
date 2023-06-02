@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthRepository implements AuthRepositoryInterface
 {
-    public function registerUser($userUid, $lastName, $firstName, $gender, $profession, $schoolDegree, $email, $phoneNumber, $password, $role, $countryId){
+    public function registerUser($userUid, $lastName, $firstName, $gender, $profession, $schoolDegree, $email, $phoneNumber, $password,  $countryId){
         try{
             $user = new User();
             $user->first_name = $firstName;
@@ -19,7 +19,7 @@ class AuthRepository implements AuthRepositoryInterface
             $user->school_degree = $schoolDegree;
             $user->email = $email;
             $user->password = $password;
-            $user->role_id = $role;
+            $user->user_type = "user";
             $user->country_id = $countryId;
             $user->reference = $userUid;
             $user->adresse = $phoneNumber;
@@ -57,5 +57,31 @@ class AuthRepository implements AuthRepositoryInterface
 
     }
 
+
+    public function registerAdmin($userUid, $lastName, $firstName, $gender, $profession, $schoolDegree, $email, $phoneNumber, $password, $countryId){
+        try{
+            $user = new User();
+            $user->first_name = $firstName;
+            $user->last_name = $lastName;
+            $user->gender = $gender;
+            $user->profession = $profession;
+            $user->school_degree = $schoolDegree;
+            $user->email = $email;
+            $user->password = $password;
+            $user->user_type = "admin";
+            $user->country_id = $countryId;
+            $user->reference = $userUid;
+            $user->adresse = $phoneNumber;
+            $user->save();
+
+
+            return true;
+
+        }catch(Exception $ex){
+            throw  new Exception($ex);
+        }
+
+    }
+    //
 
 }

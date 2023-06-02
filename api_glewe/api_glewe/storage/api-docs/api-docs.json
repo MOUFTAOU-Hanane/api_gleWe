@@ -1,0 +1,421 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": " OpenApi Documentation",
+        "description": " Swagger OpenApi description",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Register"
+                ],
+                "operationId": "01ffcf3e5dd2e813d962b3836b302fb3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "last_name": {
+                                        "type": "string",
+                                        "example": "hanane"
+                                    },
+                                    "first_name": {
+                                        "type": "string",
+                                        "example": "celsia"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "hananecelsia"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "hananecelsia@gmail.com"
+                                    },
+                                    "country_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success register"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "operationId": "8ab039c9fd5bf60c74e218987419dda8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "password": {
+                                        "type": "string",
+                                        "example": "hananecelsia"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "hananecelsia@gmail.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success register"
+                    }
+                }
+            }
+        },
+        "/api/params/new-category": {
+            "post": {
+                "tags": [
+                    "new category"
+                ],
+                "operationId": "86a9ec6dff29fbd37c61247b9127a5b6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "label": {
+                                        "type": "string",
+                                        "example": "hanane"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "category created"
+                    }
+                }
+            }
+        },
+        "/api/params/categories": {
+            "get": {
+                "tags": [
+                    "categories"
+                ],
+                "operationId": "1ae330f915d3d9330ad97e1b00a0137b",
+                "responses": {
+                    "200": {
+                        "description": " listing categories"
+                    }
+                }
+            }
+        },
+        "/api/params/countries": {
+            "get": {
+                "tags": [
+                    "countries"
+                ],
+                "operationId": "b339c042401a0392f91a248af1240b45",
+                "responses": {
+                    "200": {
+                        "description": " listing country"
+                    }
+                }
+            }
+        },
+        "/api/offer/search-course-by-category": {
+            "post": {
+                "tags": [
+                    "search-course-by-category"
+                ],
+                "operationId": "70cd2d20d46db2571a5fc7b2324f90c1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "listing course in terms of category"
+                    }
+                }
+            }
+        },
+        "/api/offer/search-course": {
+            "post": {
+                "tags": [
+                    "search-course-by-name"
+                ],
+                "operationId": "e80906e39817551bb8fa79d0405ff2fc",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "salade"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "listing course in terms of name"
+                    }
+                }
+            }
+        },
+        "/api/offer/course-detail": {
+            "post": {
+                "tags": [
+                    "detail-course"
+                ],
+                "operationId": "dd0f2359e3f4e6d91009531b31bc4f38",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "course_id": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "detail course"
+                    }
+                }
+            }
+        },
+        "/api/offer/popular-course": {
+            "get": {
+                "tags": [
+                    "popular-course"
+                ],
+                "operationId": "64f28a4c4b7a970f5bbaa4d84c65b183",
+                "responses": {
+                    "200": {
+                        "description": "popular course"
+                    }
+                }
+            }
+        },
+        "/api/offer/user-validated-course": {
+            "post": {
+                "tags": [
+                    "finish-course"
+                ],
+                "operationId": "d4bd31a28c5ec2cd654402a8e39ade3a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "course_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "user_id": {
+                                        "type": "string",
+                                        "example": "99487892-f338-4740-88e7-b3377eafe173"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "I finished this course"
+                    }
+                }
+            }
+        },
+        "/api/offer/enrolment": {
+            "post": {
+                "tags": [
+                    "enrolment-course"
+                ],
+                "operationId": "4a2d0c67bceee37167c37e482900e3b3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "course_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "user_id": {
+                                        "type": "string",
+                                        "example": "99487892-f338-4740-88e7-b3377eafe173"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "I am registering for a course"
+                    }
+                }
+            }
+        },
+        "/api/offer/course": {
+            "post": {
+                "tags": [
+                    "user-course"
+                ],
+                "operationId": "f4168f32d17a5b2de46c86c2c4a9758c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string",
+                                        "example": "99487892-f338-4740-88e7-b3377eafe173"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "my course"
+                    }
+                }
+            }
+        },
+        "/api/offer/rating-course-by-user": {
+            "post": {
+                "tags": [
+                    "rating-course"
+                ],
+                "operationId": "667b47f98f153965dac9b3d15fa2bf35",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "course_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "user_id": {
+                                        "type": "string",
+                                        "example": "99487892-f338-4740-88e7-b3377eafe173"
+                                    },
+                                    "note": {
+                                        "type": "integer",
+                                        "example": 12
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "I note the trainer"
+                    }
+                }
+            }
+        },
+        "/api/params/languages": {
+            "get": {
+                "tags": [
+                    "languages"
+                ],
+                "operationId": "cdb3c629ffe6746b92d024f6a6cd109c",
+                "responses": {
+                    "200": {
+                        "description": "languages"
+                    }
+                }
+            }
+        },
+        "/api/offer/user-validated-module": {
+            "post": {
+                "tags": [
+                    "finish-module"
+                ],
+                "operationId": "11455660d5b0f6190d7b2af05decc10f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "module_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "user_id": {
+                                        "type": "string",
+                                        "example": "99487892-f338-4740-88e7-b3377eafe173"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "I finished this module"
+                    }
+                }
+            }
+        }
+    }
+}

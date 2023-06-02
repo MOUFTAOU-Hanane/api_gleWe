@@ -43,7 +43,7 @@ class ModuleController extends Controller
             if ($validatorResult->fails()) {
                 return response()->json([
                     'data' => $validatorResult->errors()->first(),
-                    'status' => "error",
+                    'status' => false,
                     'message' => $validatorResult->errors()->first(),
                 ], 400);
             }
@@ -56,8 +56,8 @@ class ModuleController extends Controller
             if($result  === false){
                 return response()->json(
                     [
-                        "data"=> "",
-                        "status"=> "error",
+
+                        'status' => false,
                         "message"=> "error",
                     ]
                     );
@@ -65,7 +65,7 @@ class ModuleController extends Controller
                 return response()->json(
                     [
                         "data"=> $result,
-                        "status"=> "success",
+                        'status' => true,
                         "message"=> "succes",
                     ]
                     );
@@ -75,10 +75,10 @@ class ModuleController extends Controller
         }catch(Exception $ex){
             return response()->json(
                 [
-                    "data"=> "",
-                    "status"=> "error",
+
+                    'status' => false,
                     "message"=> $ex->getMessage(),
-                ]
+                ],400
                 );
         }
 
@@ -111,7 +111,7 @@ class ModuleController extends Controller
             if ($validatorResult->fails()) {
                 return response()->json([
                     'data' => $validatorResult->errors()->first(),
-                    'status' => "error",
+                    'status' => false,
                     'message' => $validatorResult->errors()->first(),
                 ], 400);
             }
@@ -137,8 +137,8 @@ class ModuleController extends Controller
             if($result  === false){
                 return response()->json(
                     [
-                        "data"=> "",
-                        "status"=> "error",
+
+                        'status' => false,
                         "message"=> "error",
                     ]
                     );
@@ -146,7 +146,7 @@ class ModuleController extends Controller
                 return response()->json(
                     [
                         "data"=> $result,
-                        "status"=> "success",
+                        'status' => true,
                         "message"=> "succes",
                     ]
                     );
@@ -156,8 +156,8 @@ class ModuleController extends Controller
         }catch(Exception $ex){
             return response()->json(
                 [
-                    "data"=> "",
-                    "status"=> "error",
+
+                    'status' => false,
                     "message"=> $ex->getMessage(),
                 ]
                 );
@@ -180,7 +180,7 @@ class ModuleController extends Controller
             if ($validatorResult->fails()) {
                 return response()->json([
                     'data' => $validatorResult->errors()->first(),
-                    'status' => "error",
+                    'status' => false,
                     'message' => $validatorResult->errors()->first(),
                 ], 400);
             }
@@ -190,7 +190,7 @@ class ModuleController extends Controller
             return response()->json(
                 [
                     "data"=> $result,
-                    "status"=> "success",
+                    'status' => true,
                     "message"=> "succes",
                 ]
                 );
@@ -198,10 +198,10 @@ class ModuleController extends Controller
         }catch(Exception $ex){
             return response()->json(
                 [
-                    "data"=> "",
-                    "status"=> "error",
+
+                    'status' => false,
                     "message"=> $ex->getMessage(),
-                ]
+                ],400
                 );
         }
 
@@ -225,7 +225,7 @@ class ModuleController extends Controller
             if ($validatorResult->fails()) {
                 return response()->json([
                     'data' => $validatorResult->errors()->first(),
-                    'status' => "error",
+                    'status' => false,
                     'message' => $validatorResult->errors()->first(),
                 ], 400);
             }
@@ -235,7 +235,7 @@ class ModuleController extends Controller
             $result = $this->_operationService->deleteModule($moduleId, $user_id);
             return response()->json([
                     "data"=> $result,
-                    "status"=> "success",
+                    'status' => true,
                     "message"=> "succes",
                 ]
                 );
@@ -243,8 +243,8 @@ class ModuleController extends Controller
         }catch(Exception $ex){
             return response()->json(
                 [
-                    "data"=> "",
-                    "status"=> "error",
+
+                    'status' => false,
                     "message"=> $ex->getMessage(),
                 ]
                 );
@@ -260,7 +260,7 @@ class ModuleController extends Controller
             $validator=[
                 'user_id' => ['required','exists:users,reference'],
                 'name' => ['required'],
-                'module_id' => ['required','exists:courses,id'],
+                'module_id' => ['required','exists:modules,id'],
                 'duration' => ['required'],
             ];
             $validationMessages = [
@@ -275,7 +275,7 @@ class ModuleController extends Controller
             if ($validatorResult->fails()) {
                 return response()->json([
                     'data' => $validatorResult->errors()->first(),
-                    'status' => "error",
+                    'status' => false,
                     'message' => $validatorResult->errors()->first(),
                 ], 400);
             }
@@ -322,18 +322,35 @@ class ModuleController extends Controller
         }catch(Exception $ex){
             return response()->json(
                 [
-                    "data"=> "",
-                    "status"=> "error",
+
+                    'status' => false,
                     "message"=> $ex->getMessage(),
-                ]
+                ],400
                 );
         }
 
     }
 
+            /**
+ * @OA\Post(
+ *     path="/api/offer/user-validated-module",
+ *     tags={"finish-module"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="module_id", type="integer", example=1),
+ *             @OA\Property(property="user_id", type="string", example="99487892-f338-4740-88e7-b3377eafe173"),
+ *         )
+ *     ),
+ *     @OA\Response(response="200", description="I finished this module"),
+ *
+ * )
+ */
+
     public function finishModule(Request $request){
         try{
-            $rData=$request->only(["module_id"]);
+            $rData=$request->only(["module_id", "user_id"]);
             $validator=[
                 'module_id' => ['required','exists:modules,id'],
                 "user_id"=> ['required','exists:users,reference'],
@@ -349,7 +366,7 @@ class ModuleController extends Controller
             if ($validatorResult->fails()) {
                 return response()->json([
                     'data' => $validatorResult->errors()->first(),
-                    'status' => "error",
+                    'status' => false,
                     'message' => $validatorResult->errors()->first(),
                 ], 400);
             }
@@ -360,7 +377,7 @@ class ModuleController extends Controller
             return response()->json(
                 [
                     "data"=> $result,
-                    "status"=> "success",
+                    'status' => true,
                     "message"=> "succes",
                 ]
                 );
@@ -369,10 +386,10 @@ class ModuleController extends Controller
             Log::error($ex->getMessage());
             return response()->json(
                 [
-                    "data"=> "",
-                    "status"=> "error",
-                    "message"=> "Une erreur est survenue",
-                ]
+
+                    'status' => false,
+                    "message"=> "Une erreur est survenue,Veuillez réessayer.",
+                ],400
                 );
         }
 

@@ -16,7 +16,7 @@ class AuthService
     }
 
      //register user
-     public function registerUser($lastName, $firstName, $gender, $profession, $schoolDegree, $email, $phoneNumber,$password,$role, $countryId){
+     public function registerUser($lastName, $firstName, $gender, $profession, $schoolDegree, $email, $phoneNumber,$password, $countryId){
 
          try {
          //check on gender
@@ -47,7 +47,7 @@ class AuthService
          $userUid =  (string) Str::orderedUuid();
 
          //register user
-         $creationResult = $this->_authRepository->registerUser($userUid, $lastName, $firstName, $gender, $profession, $schoolDegree, $email, $phoneNumber,$password,$role, $countryId);
+         $creationResult = $this->_authRepository->registerUser($userUid, $lastName, $firstName, $gender, $profession, $schoolDegree, $email, $phoneNumber,$password, $countryId);
 
          return $creationResult;
 
@@ -56,6 +56,49 @@ class AuthService
          }
 
  }
+
+
+ //register user
+ public function registerAdmin($lastName, $firstName, $gender, $profession, $schoolDegree, $email, $phoneNumber,$password, $countryId){
+
+    try {
+    //check on gender
+    $gender = strtoupper(trim($gender));
+
+    // si le champs genre existe verifier si cest soit M m F ou f
+        if ($gender !== '' && $gender !== 'M' && $gender !== 'F') {
+                throw new Exception("Veuillez entrer un genre valide.");
+        }
+
+    //check on phone number
+    //TODO: integrer le + au debut de chaque numero
+    if(isset($phoneNumber) ){
+       $phoneNumber = strtoupper(trim($phoneNumber));
+
+       if (!preg_match('/[0-9]{2}/', $phoneNumber)) {
+           throw new Exception("Veuillez entrer un numéro de téléphone valide.");
+       }
+    }
+
+    //la longueur minimum du password doit etre 5 caracteres
+    if (strlen($password) < 5) {
+        throw new Exception("Veuillez entrer un mot de passe valide comportant un minimum de cinq caractères.");
+    }
+
+    //hash password
+    $password = Hash::make($password);
+    $userUid =  (string) Str::orderedUuid();
+
+    //register user
+    $creationResult = $this->_authRepository->registerAdmin($userUid, $lastName, $firstName, $gender, $profession, $schoolDegree, $email, $phoneNumber,$password, $countryId);
+
+    return $creationResult;
+
+    } catch (\Exception $th) {
+        throw $th;
+    }
+
+}
 
  public function authenticateUser($login, $password){
     try{

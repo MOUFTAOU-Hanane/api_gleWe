@@ -22,7 +22,7 @@ class RoleController extends Controller
             $result = $this->_paramService->listingRole();
             return response()->json([
                 'data' => $result,
-                'status' => "success",  'message' => "success",
+                'status' => true, 'message' => "success",
             ], 200);
 
         }catch(Exception $ex){

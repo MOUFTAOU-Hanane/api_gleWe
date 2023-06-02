@@ -20,9 +20,9 @@ class OperationService
     public function createCourse($name, $category, $name_trainer, $price, $meaning, $duration, $lang, $fileName, $user_id){
         try{
             $userFound = User::where('reference', $user_id)->first();
-            $userRole=  $userFound->role_id;
-            $roleAdmin = Role::where("label","admin")->first();
-            if ($roleAdmin->id !==  $userRole ){
+
+
+            if ($userFound->user_type !=="admin" ){
                 throw new Exception("Vous ne disposer pas des droits pour créer une formation");
             }
             else{
@@ -40,8 +40,8 @@ class OperationService
             $userFound = User::where('reference', $user_id)->first();
             $userRole=  $userFound->role_id;
             $roleAdmin = Role::where("label","admin")->first();
-            if ($roleAdmin->id !==  $userRole ){
-                throw new Exception("Vous ne disposer pas des droits pour supprimer un module");
+            if ($userFound->user_type !=="admin" ){
+                throw new Exception("Vous ne disposer pas des droits pour supprimer un cours");
             }
             else{
                 return $this->_operationRepository->deleteCourse($courseId);
@@ -67,7 +67,7 @@ class OperationService
             $userFound = User::where('reference', $user_id)->first();
             $userRole=  $userFound->role_id;
             $roleAdmin = Role::where("label","admin")->first();
-            if ($roleAdmin->id !==  $userRole ){
+            if ($userFound->user_type !=="admin" ){
                 throw new Exception("Vous ne disposer pas des droits pour créer un module");
             }
             else{
@@ -90,8 +90,8 @@ class OperationService
             $userFound = User::where('reference', $user_id)->first();
             $userRole=  $userFound->role_id;
             $roleAdmin = Role::where("label","admin")->first();
-            if ($roleAdmin->id !==  $userRole ){
-                throw new Exception("Vous ne disposer pas des droits pour créer un module");
+            if ($userFound->user_type !=="admin" ){
+                throw new Exception("Vous ne disposer pas des droits pour créer une vidéo du module");
             }
             else{
 
@@ -110,7 +110,7 @@ class OperationService
             $userFound = User::where('reference', $user_id)->first();
             $userRole=  $userFound->role_id;
             $roleAdmin = Role::where("label","admin")->first();
-            if ($roleAdmin->id !==  $userRole ){
+            if ($userFound->user_type !=="admin" ){
                 throw new Exception("Vous ne disposer pas des droits pour modifier un module");
             }
             else{
@@ -128,7 +128,7 @@ class OperationService
             $userFound = User::where('reference', $user_id)->first();
             $userRole=  $userFound->role_id;
             $roleAdmin = Role::where("label","admin")->first();
-            if ($roleAdmin->id !==  $userRole ){
+            if ($userFound->user_type !=="admin" ){
                 throw new Exception("Vous ne disposer pas des droits pour supprimer un module");
             }
             else{

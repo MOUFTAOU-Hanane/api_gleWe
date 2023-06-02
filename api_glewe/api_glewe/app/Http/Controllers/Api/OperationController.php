@@ -33,12 +33,12 @@ class OperationController extends Controller
 
         } catch (Exception $ex) {
             //log exception
-            log::error($ex);
+            log::error($ex->getMessage());
 
             //error result
             return response()->json([
                 'data' => "",
-                'status' => "error",
+               'status' => false,
                 'message' => "Une erreur est survenue . Veuillez réessayer",
             ], 400);
         }

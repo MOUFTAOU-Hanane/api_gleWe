@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\ParamsService;
@@ -18,7 +18,22 @@ class CategoryController extends Controller
        $this->_paramService= $paramService;
     }
 
-    ///crezte category
+    ///crezte category*
+     /**
+ * @OA\Post(
+ *     path="/api/params/new-category",
+ *     tags={"new category"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="label", type="string", example="hanane"),
+ *         )
+ *     ),
+ *     @OA\Response(response="200", description="category created"),
+ *
+ * )
+ */
     public function createCategory(Request $request){
         try{
             $rData =  $request->only([
@@ -36,7 +51,7 @@ class CategoryController extends Controller
         if ($validatorResult->fails()) {
             return response()->json([
                 'data' => $validatorResult->errors()->first(),
-                'status' => "error",
+                'status' => false,
                 'message' => "Veuillez fournir des informations valides",
             ], 400);
         }
@@ -48,40 +63,49 @@ class CategoryController extends Controller
         $result = $this->_paramService->createCategory($label);
         if($result === false){
             return response()->json([
-                'status' => "error",  'message' => "Une erreur est survenue lors de l'enregistrement d'une catégorie de formation.",
+                'status' => false,  'message' => "Une erreur est survenue lors de l'enregistrement d'une catégorie de formation.",
             ], 400);
 
 
         }
         return response()->json([
             'data' =>$result,
-            'status' => "succes",  'message' => "succes",
+            'status' => true, 'message' => "succes",
         ], 200);
 
          }catch(Exception $ex){
+            log::error($ex->getMessage());
             return response()->json([
-                'data' => "",
-                'status' => "error",
-                'message' => $ex->getMessage(),
+
+                'status' => false,
+                'message' =>"Une erreur est survenue lors de la creation des catégories. ",
             ], 400);
         }
     }
 
-
     ///listing category
+     /**
+    * @OA\Get(
+        *     path="/api/params/categories",
+        *     tags={"categories"},
+        *     @OA\Response(response="200", description=" listing categories"),
+        *
+        * )
+        */
     public function listingCategory(){
         try{
             $result = $this->_paramService->listingCategory();
             return response()->json([
                 'data' => $result,
-                'status' => "success",  'message' => "success",
+               'status' => true,'message' => "success",
             ], 200);
 
         }catch(Exception $ex){
+            log::error($ex);
             return response()->json([
-                'data' => "",
-                'status' => "error",
-                'message' => $ex->getMessage(),
+
+                'status' => false,
+                'message' => "Une erreur est survenue lors du listing des catégories.",
             ], 400);
         }
 
@@ -109,7 +133,7 @@ class CategoryController extends Controller
         if ($validatorResult->fails()) {
             return response()->json([
                 'data' => $validatorResult->errors()->first(),
-                'status' => "error",
+                'status' => false,
                 'message' => "Veuillez fournir des informations valides",
             ], 400);
         }
@@ -122,20 +146,20 @@ class CategoryController extends Controller
         $result = $this->_paramService->updateCategory($categoryId, $label);
         if($result === false){
             return response()->json([
-                'status' => "error",  'message' => "Une erreur est survenue pendant la modification    d'une catégorie de formation.",
+                'status' => false,  'message' => "Une erreur est survenue pendant la modification    d'une catégorie de formation.",
             ], 400);
 
 
         }
         return response()->json([
             'data' =>$result,
-            'status' => "succes",  'message' => "succes",
+            'status' => true, 'message' => "succes",
         ], 200);
 
          }catch(Exception $ex){
             return response()->json([
-                'data' => "",
-                'status' => "error",
+
+                'status' => false,
                 'message' => $ex->getMessage(),
             ], 400);
         }
@@ -159,7 +183,7 @@ class CategoryController extends Controller
         if ($validatorResult->fails()) {
             return response()->json([
                 'data' => $validatorResult->errors()->first(),
-                'status' => "error",
+                'status' => false,
                 'message' => "Veuillez fournir des informations valides",
             ], 400);
         }
@@ -172,20 +196,20 @@ class CategoryController extends Controller
         $result = $this->_paramService->deleteCategory($categoryId, $label);
         if($result === false){
             return response()->json([
-                'status' => "error",  'message' => "Une erreur est survenue lors de la suppression d'une catégorie de formation.",
+                'status' => false,  'message' => "Une erreur est survenue lors de la suppression d'une catégorie de formation.",
             ], 400);
 
 
         }
         return response()->json([
             'data' =>$result,
-            'status' => "succes",  'message' => "succes",
+            'status' => true, 'message' => "succes",
         ], 200);
 
          }catch(Exception $ex){
             return response()->json([
-                'data' => "",
-                'status' => "error",
+
+                'status' => false,
                 'message' => $ex->getMessage(),
             ], 400);
         }

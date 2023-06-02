@@ -56,7 +56,7 @@ class CourseController extends Controller
             if ($validatorResult->fails()) {
                 return response()->json([
                     'data' => $validatorResult->errors()->first(),
-                    'status' => "error",
+                   'status' => false,
                     'message' => $validatorResult->errors()->first(),
                 ], 400);
             }
@@ -93,8 +93,8 @@ class CourseController extends Controller
             if($result  === false){
                 return response()->json(
                     [
-                        "data"=> "",
-                        "status"=> "error",
+
+                       "status"=> false,
                         "message"=> "error",
                     ]
                     );
@@ -102,7 +102,7 @@ class CourseController extends Controller
                 return response()->json(
                     [
                         "data"=> $result,
-                        "status"=> "success",
+                       "status"=> true,
                         "message"=> "succes",
                     ]
                     );
@@ -113,9 +113,9 @@ class CourseController extends Controller
             log::error($ex->getMessage());
             return response()->json(
                 [
-                    "data"=> "",
-                    "status"=> "error",
-                    "message"=> "Une erreur est surveneue pendant la création de la formation. Veuillez réessayer",
+
+                   "status"=> false,
+                    "message"=> "Une erreur est survenue pendant la création de la formation. Veuillez réessayer",
                 ]
                 );
         }
@@ -140,7 +140,7 @@ class CourseController extends Controller
             if ($validatorResult->fails()) {
                 return response()->json([
                     'data' => $validatorResult->errors()->first(),
-                    'status' => "error",
+                   'status' => false,
                     'message' => $validatorResult->errors()->first(),
                 ], 400);
             }
@@ -151,8 +151,8 @@ class CourseController extends Controller
             if($result  === false){
                 return response()->json(
                     [
-                        "data"=> "",
-                        "status"=> "error",
+
+                       "status"=> false,
                         "message"=> "error",
                     ]
                     );
@@ -160,7 +160,7 @@ class CourseController extends Controller
                 return response()->json(
                     [
                         "data"=> $result,
-                        "status"=> "success",
+                       "status"=> true,
                         "message"=> "succes",
                     ]
                     );
@@ -170,8 +170,8 @@ class CourseController extends Controller
         }catch(Exception $ex){
             return response()->json(
                 [
-                    "data"=> "",
-                    "status"=> "error",
+
+                   "status"=> false,
                     "message"=> $ex->getMessage(),
                 ]
                 );
@@ -184,19 +184,37 @@ class CourseController extends Controller
             $result = $this->_operationService->getCourse();
             return response()->json([
                 'data' => $result,
-                'status' => "success",  'message' => "success",
+               'status' => true,  'message' => "success",
             ], 200);
 
         }catch(Exception $ex){
+            log::error( $ex);
             return response()->json([
-                'data' => "",
-                'status' => "error",
-                'message' => $ex->getMessage(),
+
+               'status' => false,
+                'message' => "Une erreur est survenue pour voir la liste des formations.Veuillez réessayer",
             ], 400);
         }
 
     }
 
+
+ /**
+ * @OA\Post(
+ *     path="/api/offer/search-course-by-category",
+ *     tags={"search-course-by-category"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="category_id", type="integer", example=1),
+ *
+ *         )
+ *     ),
+ *     @OA\Response(response="200", description="listing course in terms of category"),
+ *
+ * )
+ */
 
     public function searchCourseByCategory(Request $request){
         try{
@@ -213,7 +231,7 @@ class CourseController extends Controller
             if ($validatorResult->fails()) {
                 return response()->json([
                     'data' => $validatorResult->errors()->first(),
-                    'status' => "error",
+                   'status' => false,
                     'message' => $validatorResult->errors()->first(),
                 ], 400);
             }
@@ -224,7 +242,7 @@ class CourseController extends Controller
                 return response()->json(
                     [
                         "data"=> $result,
-                        "status"=> "success",
+                       "status"=> true,
                         "message"=> "succes",
                     ]
                     );
@@ -234,15 +252,30 @@ class CourseController extends Controller
         }catch(Exception $ex){
             return response()->json(
                 [
-                    "data"=> "",
-                    "status"=> "error",
+
+                   "status"=> false,
                     "message"=> $ex->getMessage(),
-                ]
-                );
+                ],400);
         }
 
     }
 
+     /**
+ * @OA\Post(
+ *     path="/api/offer/search-course",
+ *     tags={"search-course-by-name"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="name", type="string", example="salade"),
+ *
+ *         )
+ *     ),
+ *     @OA\Response(response="200", description="listing course in terms of name"),
+ *
+ * )
+ */
     public function searchCourse(Request $request){
         try{
             $rData=$request->only(['name']);
@@ -257,7 +290,7 @@ class CourseController extends Controller
             if ($validatorResult->fails()) {
                 return response()->json([
                     'data' => $validatorResult->errors()->first(),
-                    'status' => "error",
+                   'status' => false,
                     'message' => $validatorResult->errors()->first(),
                 ], 400);
             }
@@ -267,22 +300,41 @@ class CourseController extends Controller
 
                 return response()->json([
                         "data"=> $result,
-                        "status"=> "success",
+                       "status"=> true,
                         "message"=> "succes",
                     ]
                     );
         }catch(Exception $ex){
+            log::error($ex->getMessage());
             return response()->json(
                 [
-                    "data"=> "",
-                    "status"=> "error",
-                    "message"=> $ex->getMessage(),
-                ]
+
+                   "status"=> false,
+                    "message"=>"Une erreur est survenue.Veuillez réessayer",
+                ],400
                 );
         }
 
     }
 
+
+
+     /**
+ * @OA\Post(
+ *     path="/api/offer/course-detail",
+ *     tags={"detail-course"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="course_id", type="integer", example="1"),
+ *
+ *         )
+ *     ),
+ *     @OA\Response(response="200", description="detail course"),
+ *
+ * )
+ */
 
     public function detailCourse(Request $request){
         try{
@@ -299,7 +351,7 @@ class CourseController extends Controller
             if ($validatorResult->fails()) {
                 return response()->json([
                     'data' => $validatorResult->errors()->first(),
-                    'status' => "error",
+                   'status' => false,
                     'message' => $validatorResult->errors()->first(),
                 ], 400);
             }
@@ -310,44 +362,69 @@ class CourseController extends Controller
                 return response()->json(
                     [
                         "data"=> $result,
-                        "status"=> "success",
+                       "status"=> true,
                         "message"=> "succes",
                     ]
                     );
         }catch(Exception $ex){
+            log::error( $ex->getMessage());
             return response()->json(
                 [
-                    "data"=> "",
-                    "status"=> "error",
-                    "message"=> "Une erreur est survenue",
-                ]
+
+                   "status"=> false,
+                    "message"=> "Une erreur est survenue pour voir le detail de la formation.Veuillez réessayer",
+                ],400
                 );
         }
 
     }
 
+            /**
+ * @OA\Get(
+ *     path="/api/offer/popular-course",
+ *     tags={"popular-course"},
+ *     @OA\Response(response="200", description="popular course"),
+ *
+ * )
+ */
 
     public function getPopularCourse(){
         try{
             $result = $this->_operationService->getPopularCourse();
             return response()->json([
                 'data' => $result,
-                'status' => "success",  'message' => "success",
+               'status' => true,  'message' => "success",
             ], 200);
 
         }catch(Exception $ex){
             Log::error($ex->getMessage());
             return response()->json(
                 [
-                    "data"=> "",
-                    "status"=> "error",
-                    "message"=> "Une erreur est survenue",
-                ]
+
+                   "status"=> false,
+                    "message"=> "Une erreur est survenue lors du chargement des cours.Veuillez réessayer",
+                ],400
                 );
         }
 
     }
 
+         /**
+ * @OA\Post(
+ *     path="/api/offer/user-validated-course",
+ *     tags={"finish-course"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="course_id", type="integer", example=1),
+ *             @OA\Property(property="user_id", type="string", example="99487892-f338-4740-88e7-b3377eafe173"),
+ *         )
+ *     ),
+ *     @OA\Response(response="200", description="I finished this course"),
+ *
+ * )
+ */
 
     public function finishCourse(Request $request){
         try{
@@ -367,18 +444,18 @@ class CourseController extends Controller
             if ($validatorResult->fails()) {
                 return response()->json([
                     'data' => $validatorResult->errors()->first(),
-                    'status' => "error",
+                   'status' => false,
                     'message' => $validatorResult->errors()->first(),
                 ], 400);
             }
 
-            $idCourse=  $rData['module_id'];
+            $idCourse=  $rData['course_id'];
             $idUser = $rData['user_id'];
             $result = $this->_operationService->finishCourse($idUser, $idCourse);
             return response()->json(
                 [
                     "data"=> $result,
-                    "status"=> "success",
+                   "status"=> true,
                     "message"=> "succes",
                 ]
                 );
@@ -387,9 +464,9 @@ class CourseController extends Controller
             Log::error($ex->getMessage());
             return response()->json(
                 [
-                    "data"=> "",
-                    "status"=> "error",
-                    "message"=> "Une erreur est survenue",
+
+                   "status"=> false,
+                    "message"=> "Vous n'avez pas finir les modules.",
                 ]
                 );
         }

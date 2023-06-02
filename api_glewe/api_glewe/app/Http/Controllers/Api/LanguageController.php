@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Services\ParamsService;
 use Exception;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+
 
 class LanguageController extends Controller
 {
@@ -17,19 +19,27 @@ class LanguageController extends Controller
     }
 
       ///listing languages
+                 /**
+ * @OA\Get(
+ *     path="/api/params/languages",
+ *     tags={"languages"},
+ *     @OA\Response(response="200", description="languages"),
+ *
+ * )
+ */
       public function listingLanguage(){
         try{
             $result = $this->_paramService->listingLanguage();
             return response()->json([
                 'data' => $result,
-                'status' => "success",  'message' => "success",
+               'status' => true,'message' => "success",
             ], 200);
 
         }catch(Exception $ex){
+            log::error($ex->getMessage());
             return response()->json([
-                'data' => "",
-                'status' => "error",
-                'message' => $ex->getMessage(),
+                'status' => false,
+                'message' => "Une erreur est survenue pendant le chargement.Veuillez réessayer.",
             ], 400);
         }
 
